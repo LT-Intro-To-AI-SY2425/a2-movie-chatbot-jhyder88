@@ -23,11 +23,10 @@ def match(pattern: List[str], source: List[str]) -> List[str]:
     # the index is != to the length of the list)
     while pind < len(pattern) or sind<len(source):
         
-        if pind == len(pattern):
+        if pind == len(pattern) and sind < len(source):
             return None
         
-        elif sind == len(source):
-            return None
+        
         
         elif pattern[pind] == "_":
             result.append(source[sind])
@@ -35,15 +34,22 @@ def match(pattern: List[str], source: List[str]) -> List[str]:
             sind += 1
         
         elif pattern[pind] == "%":
-            if pind == len(pattern - 1):
+            if pind == len(pattern) - 1:
                 combined = ''.join(source[sind:])
                 result.append(combined)
                 return result
-
+            else:
+                pind += 1
+                accum = ""
+                while pattern[pind] != source[sind]:
+                    accum += source[sind] + " "
+                    sind += 1
+                    if sind >= len(source):
+                        return None
+                result.append(accum.rstrip())
         
-        elif pattern[pind] == source[sind]:
-            pind += 1
-            sind += 1
+        elif sind == len(source) and pind < len(pattern):
+            return None
         
         else:
             return None
